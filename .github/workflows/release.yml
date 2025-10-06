@@ -1,0 +1,50 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build and publish
+        run: |
+          dotnet publish RestronautService/RestronautService.csproj -c Release -r win-x86 -f net8.0 `
+            -p:SelfContained=true -p:PublishReadyToRun=true -p:PublishSingleFile=true `
+            -p:ASPNETCORE_ENVIRONMENT=Production -o ./publish
+
+      - name: Rename appsettings.json
+        run: mv ./publish/appsettings.json ./publish/appsettings.json.spec
+
+      - name: Zip the application
+        run: |
+          mkdir release
+          cd publish
+          zip -r ../release/release.zip *
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ github.run_number }}
+          tag_name: release-${{ github.run_number }}
+          body: "Automated release from main branch."
+          files: release/release.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

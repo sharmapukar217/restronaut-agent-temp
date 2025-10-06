@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<Nullable>enable</Nullable>
+		<TargetFramework>net8.0</TargetFramework>
+		<RuntimeIdentifier>win-x86</RuntimeIdentifier>
+		<SelfContained>true</SelfContained>
+		<ApplicationIcon>icon.ico</ApplicationIcon>
+		<PublishSingleFile>true</PublishSingleFile>
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<!-- GitVersion injected versions -->
+		<Version>$(GitVersion_MajorMinorPatch)</Version>
+		<AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
+		<FileVersion>$(GitVersion_AssemblySemFileVer)</FileVersion>
+		<PackageVersion>$(GitVersion_MajorMinorPatch)</PackageVersion>
+		<InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
+	</PropertyGroup>
+	<PropertyGroup>
+		<DebugType>none</DebugType>
+		<IncludeSymbols>false</IncludeSymbols>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="icon.ico" />
+		<EmbeddedResource Include="OtaUpdater\updater.bat" />
+		<Content Include="appsettings.Development.json" Link="appsettings.Development.json" Condition="'$(ASPNETCORE_ENVIRONMENT)' == 'Development'">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AWSSDK.S3" Version="4.0.1.1" />
+		<PackageReference Include="Cronos" Version="0.11.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Refit" Version="8.0.0" />
+		<PackageReference Include="LazyCache" Version="2.4.0" />
+		<PackageReference Include="Refit.HttpClientFactory" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Hosting.WindowsServices" Version="8.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
+		<PackageReference Include="SharpCompress" Version="0.39.0" />
+	</ItemGroup>
+</Project>
