@@ -31,13 +31,12 @@ jobs:
             -p:ASPNETCORE_ENVIRONMENT=Production -o ./publish
 
       - name: Rename appsettings.json
-        run: mv ./publish/appsettings.json ./publish/appsettings.json.spec
+        run: Rename-Item -Path "./publish/appsettings.json" -NewName "appsettings.json.spec"
 
-      - name: Zip the application
+      - name: Zip the application (Windows safe)
         run: |
-          mkdir release
-          cd publish
-          zip -r ../release/release.zip *
+          New-Item -ItemType Directory -Force -Path release
+          Compress-Archive -Path publish\* -DestinationPath release\release.zip -Force
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
